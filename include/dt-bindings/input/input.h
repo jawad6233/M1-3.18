@@ -268,7 +268,13 @@
 #define KEY_RFKILL		247	/* Key that controls all radios */
 
 #define KEY_MICMUTE		248	/* Mute / unmute the microphone */
-
+/*zougx add key 2016-8-10 start*/
+#define KEY_SOS			300
+#define KEY_POC			301
+#define KEY_PTT			302
+#define KEY_SQ			303
+#define KEY_ET			304
+/*zougx add key 2016-8-10 start*/
 /* Code 255 is reserved for special needs of AT keyboard driver */
 
 #define BTN_MISC		0x100
