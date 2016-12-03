@@ -1,0 +1,491 @@
+#ifdef BUILD_LK
+#include <platform/mt_i2c.h>
+#include <platform/mt_pmic.h>
+#else
+#endif
+
+#include "lcm_drv.h"
+
+
+// ---------------------------------------------------------------------------
+//  Local Constants
+// ---------------------------------------------------------------------------
+#define LCM_ID	                    0x1287
+//#define LCM_ID (0x8394)
+#define FRAME_WIDTH  										(720)
+#define FRAME_HEIGHT 										(1280)
+
+#define REGFLAG_DELAY             							0xFFE
+#define REGFLAG_END_OF_TABLE      							0xFFF   // END OF REGISTERS MARKER
+
+#define LCM_DSI_CMD_MODE									0
+
+// ---------------------------------------------------------------------------
+//  Local Variables
+// ---------------------------------------------------------------------------
+
+static LCM_UTIL_FUNCS lcm_util = {0};
+
+//#ifdef BUILD_LK
+//int global_lcd_id_hx8394 = 0;
+//#endif
+
+#define SET_RESET_PIN(v)    (lcm_util.set_reset_pin((v)))
+
+#define UDELAY(n) (lcm_util.udelay(n))
+#define MDELAY(n) (lcm_util.mdelay(n))
+
+
+// ---------------------------------------------------------------------------
+//  Local Functions
+// ---------------------------------------------------------------------------
+
+#define dsi_set_cmdq_V2(cmd, count, ppara, force_update)	lcm_util.dsi_set_cmdq_V2(cmd, count, ppara, force_update)
+//#define dsi_set_cmdq_V2_TIN(cmd, count, ppara, force_update)	lcm_util.dsi_set_cmdq_V2_TIN(cmd, count, ppara, force_update)
+#define dsi_set_cmdq(pdata, queue_size, force_update)		lcm_util.dsi_set_cmdq(pdata, queue_size, force_update)
+#define wrtie_cmd(cmd)									lcm_util.dsi_write_cmd(cmd)
+#define write_regs(addr, pdata, byte_nums)				lcm_util.dsi_write_regs(addr, pdata, byte_nums)
+#define read_reg											lcm_util.dsi_read_reg()
+#define read_reg_v2(cmd, buffer, buffer_size)                   lcm_util.dsi_dcs_read_lcm_reg_v2(cmd, buffer, buffer_size)
+       
+
+typedef struct {
+    unsigned cmd;
+    unsigned char count;
+    unsigned char para_list[64];
+}LCM_setting_table;
+
+
+static LCM_setting_table lcm_initialization_setting[] = {
+
+	{0x00,1,{0x00}},
+	{0xff,3,{0x12,0x87,0x01}},	//EXTC=1
+	{0x00,1,{0x80}},	        //Orise mode enable
+	{0xff,2,{0x12,0x87}},
+
+	{0x00,1,{0x92}},
+	{0xff,2,{0x30,0x02}},
+//-------------------- panel setting --------------------//
+	{0x00,1,{0x80}},             //TCON Setting
+	{0xc0,9,{0x00,0x64,0x00,0x10,0x10,0x00,0x64,0x10,0x10}},
+
+	{0x00,1,{0x90}},             //Panel Timing Setting
+	{0xc0,6,{0x00,0x5c,0x00,0x01,0x00,0x04}},
+
+	{0x00,1,{0xa2}},
+	{0xC0,3,{0x01,0x00,0x00}},
+
+	{0x00,1,{0xb3}},             //Interval Scan Frame: 0 frame, column inversion
+	{0xc0,2,{0x00,0x55}},	
+	
+	{0x00,1,{0x81}},             //frame rate:60Hz
+	{0xc1,1,{0x66}},
+
+    {0x00,1,{0xa2}},
+    {0xc1,1,{0x0a}},
+	
+	{0x00,1,{0xa4}},
+    {0xc1,1,{0xf0}},
+	 
+	{0x00,1,{0x80}},           
+	{0xc4,1,{0x01}},
+
+    {0x00,1,{0x88}},
+    {0xc4,1,{0x80}},
+	
+	{0x00,1,{0xC2}},
+    {0xf5,1,{0x40}},
+	 
+	{0x00,1,{0xC8}},
+    {0xB0,1,{0x42}},
+	
+	
+    {0x00,1,{0x92}},
+    {0xB3,1,{0x02}},
+	
+//-------------------- power setting --------------------//
+	{0x00,1,{0xa0}},             //dcdc setting
+	{0xc4,14,{0x05,0x10,0x04,0x02,0x05,0x15,0x11,0x05,0x10,0x07,0x02,0x05,0x15,0x11}},
+
+	{0x00,1,{0xb0}},             //clamp voltage setting
+	{0xc4,2,{0x00,0x00}},
+
+	{0x00,1,{0x91}},             //VGH=13V, VGL=-12V, pump ratio:VGH=6x, VGL=-5x
+	{0xc5,2,{0x29,0x52}},
+
+	{0x00,1,{0x00}},             //GVDD=4.204V, NGVDD=-4.204V
+	{0xd8,2,{0x94,0x94}},          //94=4.396
+
+	{0x00,1,{0x00}}, 		//VCOM=-0.240V
+	{0xd9,1,{0x52}},             //0d
+
+	{0x00,1,{0xb3}},             //VDD_18V=1.7V, LVDSVDD=1.6V
+	{0xc5,1,{0x84}},
+
+	{0x00,1,{0xbb}},             //LVD voltage level setting
+	{0xc5,1,{0x8a}},
+
+	{0x00,1,{0x82}},		//chopper
+	{0xC4,1,{0x0a}},
+
+	{0x00,1,{0xc6}},		//debounce
+	{0xb0,1,{0x03}},
+
+//-------------------- control setting --------------------//
+	{0x00,1,{0x00}},             //ID1
+	{0xd0,1,{0x40}},
+
+	{0x00,1,{0x00}},             //ID2, ID3
+	{0xd1,2,{0x00,0x00}},
+
+//-------------------- power on setting --------------------//
+	{0x00,1,{0x80}},             //source blanking frame = black, defacult='30'
+	{0xc4,1,{0x00}},
+
+	{0x00,1,{0x98}},             //vcom discharge=gnd:'10', '00'=disable
+	{0xc5,1,{0x10}},
+
+	{0x00,1,{0x81}},
+	{0xf5,1,{0x15}},  // ibias off
+	{0x00,1,{0x83}},
+	{0xf5,1,{0x15}},  // lvd off
+	{0x00,1,{0x85}},
+	{0xf5,1,{0x15}},  // gvdd off
+	{0x00,1,{0x87}},
+	{0xf5,1,{0x15}},  // lvdsvdd off
+	{0x00,1,{0x89}},
+	{0xf5,1,{0x15}},  // nvdd_18 off
+	{0x00,1,{0x8b}},
+	{0xf5,1,{0x15}},  // en_vcom off
+
+	{0x00,1,{0x95}},
+	{0xf5,1,{0x15}},  // pump3 off
+	{0x00,1,{0x97}},
+	{0xf5,1,{0x15}},  // pump4 off
+	{0x00,1,{0x99}},
+	{0xf5,1,{0x15}},  // pump5 off
+
+	{0x00,1,{0xa1}},
+	{0xf5,1,{0x15}},  // gamma off
+	{0x00,1,{0xa3}},
+	{0xf5,1,{0x15}},  // sd ibias off
+	{0x00,1,{0xa5}},
+	{0xf5,1,{0x15}},  // sdpch off
+	{0x00,1,{0xa7}},
+	{0xf5,1,{0x15}},  // sdpch bias off
+	{0x00,1,{0xab}},
+	{0xf5,1,{0x18}},  // ddc osc off
+
+	{0x00,1,{0x94}},             //VCL pump dis
+	{0xf5,2,{0x00,0x00}},
+
+	{0x00,1,{0xd2}},             //VCL reg. en
+	{0xf5,2,{0x06,0x15}},
+
+	{0x00,1,{0xb2}},             //VGLO1
+	{0xf5,2,{0x00,0x00}},
+
+	{0x00,1,{0xb6}},             //VGLO2
+	{0xf5,2,{0x00,0x00}},
+
+	{0x00,1,{0xb4}},             //VGLO1/2 Pull low setting
+	{0xc5,1,{0xcc}},		//d[7] vglo1 d[6] vglo2 => 0: pull vss, 1: pull vgl
+
+//-------------------- for Power IC ---------------------------------
+	{0x00,1,{0x90}},             //Mode-3
+	{0xf5,4,{0x02,0x11,0x02,0x15}},
+
+	{0x00,1,{0x90}},             //2xVPNL, 1.5*=00, 2*=50, 3*=a0
+	{0xc5,1,{0x50}},
+
+	{0x00,1,{0x94}},             //Frequency
+	{0xc5,1,{0x77}},
+
+//-------------------- panel timing state control --------------------//
+	{0x00,1,{0x80}},             //panel timing state control
+	{0xcb,11,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}},
+
+	{0x00,1,{0x90}},             //panel timing state control
+	{0xcb,15,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0x00,0xff,0x00}},
+
+	{0x00,1,{0xa0}},             //panel timing state control
+	{0xcb,15,{0xff,0x00,0xff,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}},
+
+	{0x00,1,{0xb0}},             //panel timing state control
+	{0xcb,15,{0x00,0x00,0x00,0xff,0x00,0xff,0x00,0xff,0x00,0xff,0x00,0x00,0x00,0x00,0x00}},
+
+	{0x00,1,{0xc0}},             //panel timing state control
+	{0xcb,15,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x05,0x05,0x00,0x05,0x05,0x05,0x05,0x05}},
+
+	{0x00,1,{0xd0}},             //panel timing state control
+	{0xcb,15,{0x05,0x05,0x05,0x05,0x05,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x05}},
+
+	{0x00,1,{0xe0}},             //panel timing state control
+	{0xcb,14,{0x05,0x00,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x00,0x00}},
+
+	{0x00,1,{0xf0}},             //panel timing state control
+	{0xcb,11,{0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff}},
+
+//-------------------- panel pad mapping control --------------------//
+	{0x00,1,{0x80}},             //panel pad mapping control
+	{0xcc,15,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x05,0x07,0x00,0x11,0x15,0x13,0x17,0x0d}},
+
+	{0x00,1,{0x90}},             //panel pad mapping control
+	{0xcc,15,{0x09,0x0f,0x0b,0x01,0x03,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x06}},
+
+	{0x00,1,{0xa0}},             //panel pad mapping control
+	{0xcc,14,{0x08,0x00,0x12,0x16,0x14,0x18,0x0e,0x0a,0x10,0x0c,0x02,0x04,0x00,0x00}},
+
+	{0x00,1,{0xb0}},             //panel pad mapping control
+	{0xcc,15,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x04,0x02,0x00,0x14,0x18,0x12,0x16,0x0c}},
+
+	{0x00,1,{0xc0}},             //panel pad mapping control
+	{0xcc,15,{0x10,0x0a,0x0e,0x08,0x06,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x03}},
+
+	{0x00,1,{0xd0}},             //panel pad mapping control
+	{0xcc,14,{0x01,0x00,0x13,0x17,0x11,0x15,0x0b,0x0f,0x09,0x0d,0x07,0x05,0x00,0x00}},
+
+//-------------------- panel timing setting --------------------//
+	{0x00,1,{0x80}},             //panel VST setting
+	{0xce,12,{0x87,0x03,0x28,0x86,0x03,0x28,0x85,0x03,0x28,0x84,0x03,0x28}},
+
+	{0x00,1,{0x90}},             //panel VEND setting
+	{0xce,14,{0x34,0xfc,0x28,0x34,0xfd,0x28,0x34,0xfe,0x28,0x34,0xff,0x28,0x00,0x00}},
+
+	{0x00,1,{0xa0}},             //panel CLKA1/2 setting
+	{0xce,14,{0x38,0x07,0x05,0x00,0x00,0x28,0x00,0x38,0x06,0x05,0x01,0x00,0x28,0x00}},
+
+	{0x00,1,{0xb0}},             //panel CLKA3/4 setting
+	{0xce,14,{0x38,0x05,0x05,0x02,0x00,0x28,0x00,0x38,0x04,0x05,0x03,0x00,0x28,0x00}},
+
+	{0x00,1,{0xc0}},             //panel CLKb1/2 setting
+	{0xce,14,{0x38,0x03,0x05,0x04,0x00,0x28,0x00,0x38,0x02,0x05,0x05,0x00,0x28,0x00}},
+
+	{0x00,1,{0xd0}},             //panel CLKb3/4 setting
+	{0xce,14,{0x38,0x01,0x05,0x06,0x00,0x28,0x00,0x38,0x00,0x05,0x07,0x00,0x28,0x00}},
+
+	{0x00,1,{0x80}},             //panel CLKc1/2 setting
+	{0xcf,14,{0x38,0x07,0x05,0x00,0x00,0x18,0x25,0x38,0x06,0x05,0x01,0x00,0x18,0x25}},
+
+	{0x00,1,{0x90}},             //panel CLKc3/4 setting
+	{0xcf,14,{0x38,0x05,0x05,0x02,0x00,0x18,0x25,0x38,0x04,0x05,0x03,0x00,0x18,0x25}},
+
+	{0x00,1,{0xa0}},             //panel CLKd1/2 setting
+	{0xcf,14,{0x38,0x03,0x05,0x04,0x00,0x18,0x25,0x38,0x02,0x05,0x05,0x00,0x18,0x25}},
+
+	{0x00,1,{0xb0}},             //panel CLKd3/4 setting
+	{0xcf,14,{0x38,0x01,0x05,0x06,0x00,0x18,0x25,0x38,0x00,0x05,0x07,0x00,0x18,0x25}},
+
+	{0x00,1,{0xc0}},             //panel ECLK setting
+	{0xcf,11,{0x01,0x01,0x20,0x20,0x00,0x00,0x01,0x81,0x00,0x03,0x08}},
+
+//-------------------- gamma --------------------//
+
+	{0x00,1,{0x00}},
+	{0xE1,20,{0x04,0x26,0x35,0x44,0x55,0x62,0x64,0x90,0x80,0x99,0x6A,0x55,0x67,0x44,0x44,0x37,0x2A,0x1F,0x06,0x06}},
+
+	{0x00,1,{0x00}},
+	{0xE2,20,{0x04,0x26,0x35,0x43,0x54,0x62,0x65,0x8F,0x80,0x99,0x6A,0x55,0x67,0x43,0x44,0x38,0x2A,0x20,0x06,0x06}},
+
+
+  	{0x00,1,{0x00}},             //Orise mode disable
+  	{0xff,3,{0xff,0xff,0xff}},
+
+	{0x35,1,{0x00}},//TE on
+
+	{0x11,1,{0x00}},//SLEEP OUT
+	{REGFLAG_DELAY,120,{}},
+
+	{0x29,1,{0x00}},//Display ON 
+	{REGFLAG_DELAY,20,{}},	
+
+
+	{REGFLAG_END_OF_TABLE, 0x00, {}}
+
+};
+
+
+
+/*
+static struct LCM_setting_table lcm_sleep_out_setting[] = {
+    // Sleep Out
+    {0x11, 0, {}},
+    {REGFLAG_DELAY, 220, {}},
+
+    // Display ON
+    {0x29, 0, {}},
+    {REGFLAG_END_OF_TABLE, 0x00, {}}
+};
+*/
+
+
+static LCM_setting_table lcm_deep_sleep_mode_in_setting[] = {
+    {0x28, 0, {}},
+	 {REGFLAG_DELAY, 120, {}},
+    // Sleep Mode On
+    {0x10, 0, {}},
+    {REGFLAG_DELAY, 120, {}},
+    {REGFLAG_END_OF_TABLE, 0x00, {}}
+};
+
+static void push_table(LCM_setting_table *table, unsigned int count, unsigned char force_update)
+{
+	unsigned int i;
+
+    for(i = 0; i < count; i++) {
+		
+        unsigned cmd;
+        cmd = table[i].cmd;
+		
+        switch (cmd) {
+			
+            case REGFLAG_DELAY :
+                MDELAY(table[i].count);
+                break;
+				
+            case REGFLAG_END_OF_TABLE :
+                break;
+				
+            default:
+				dsi_set_cmdq_V2(cmd, table[i].count, table[i].para_list, force_update);
+				
+				
+		
+   
+				
+				
+				
+       	}
+    }
+	
+}
+
+
+// ---------------------------------------------------------------------------
+//  LCM Driver Implementations
+// ---------------------------------------------------------------------------
+
+static void lcm_set_util_funcs(const LCM_UTIL_FUNCS *util)
+{
+    memcpy(&lcm_util, util, sizeof(LCM_UTIL_FUNCS));
+}
+
+
+static void lcm_get_params(LCM_PARAMS *params)
+{
+    memset(params, 0, sizeof(LCM_PARAMS));
+
+    params->type   = LCM_TYPE_DSI;
+    params->width  = FRAME_WIDTH;
+    params->height = FRAME_HEIGHT;
+
+    // enable tearing-free
+    params->dbi.te_mode 				= LCM_DBI_TE_MODE_VSYNC_ONLY;
+    params->dbi.te_edge_polarity		= LCM_POLARITY_RISING;
+
+    params->dsi.mode   =SYNC_PULSE_VDO_MODE;// BURST_VDO_MODE;
+
+
+    // DSI
+    /* Command mode setting */
+    params->dsi.LANE_NUM				= LCM_FOUR_LANE;
+    //The following defined the fomat for data coming from LCD engine.
+    params->dsi.data_format.color_order = LCM_COLOR_ORDER_RGB;
+    params->dsi.data_format.trans_seq   = LCM_DSI_TRANS_SEQ_MSB_FIRST;
+    params->dsi.data_format.padding     = LCM_DSI_PADDING_ON_LSB;
+    params->dsi.data_format.format      = LCM_DSI_FORMAT_RGB888;
+
+    // Highly depends on LCD driver capability.
+    // Not support in MT6573
+   // params->dsi.packet_size=256;
+    params->dsi.PS=LCM_PACKED_PS_24BIT_RGB888;
+//chenwj add 15.03.24
+    params->dsi.vertical_sync_active				= 2;
+    params->dsi.vertical_backporch				= 14;
+    params->dsi.vertical_frontporch				= 16;
+    params->dsi.vertical_active_line				= FRAME_HEIGHT;
+
+    params->dsi.horizontal_sync_active				= 8;
+    params->dsi.horizontal_backporch				= 50;
+    params->dsi.horizontal_frontporch				= 50;
+    params->dsi.horizontal_active_pixel				= FRAME_WIDTH;
+//end
+
+	params->dsi.PLL_CLOCK = 200; //this value must be in MTK suggested table
+	
+	params->dsi.clk_lp_per_line_enable=1;
+	params->dsi.esd_check_enable = 1;
+	params->dsi.customization_esd_check_enable = 1;
+	
+	params->dsi.lcm_esd_check_table[0].cmd = 0x0a;
+	params->dsi.lcm_esd_check_table[0].count = 1;
+	params->dsi.lcm_esd_check_table[0].para_list[0] = 0x9C;
+	
+	
+	params->dsi.noncont_clock = 1;
+	params->dsi.noncont_clock_period = 2;
+
+	
+}
+static void lcm_init(void)
+{
+	SET_RESET_PIN(1);
+	MDELAY(10);
+	SET_RESET_PIN(0);
+    MDELAY(30);
+    SET_RESET_PIN(1);
+    MDELAY(120);
+
+	push_table(lcm_initialization_setting, sizeof(lcm_initialization_setting) / sizeof(LCM_setting_table), 1);
+}
+
+
+static void lcm_suspend(void)
+{
+	push_table(lcm_deep_sleep_mode_in_setting, sizeof(lcm_deep_sleep_mode_in_setting) / sizeof(LCM_setting_table), 1);
+
+}
+
+
+static void lcm_resume(void)
+{
+//	MDELAY(10);
+	lcm_init();
+}
+
+//#define HX8394D_HD720_ID  (0x94)
+static unsigned int lcm_compare_id(void)
+{
+    int   array[4];
+	char  buffer[5];
+	unsigned int id=0;
+
+	
+	SET_RESET_PIN(1);
+	MDELAY(10);
+	SET_RESET_PIN(0);
+    MDELAY(30);
+    SET_RESET_PIN(1);
+    MDELAY(50);
+   		
+	array[0] = 0x00083700;// read id return two byte,version and id
+	dsi_set_cmdq(array, 1, 1);
+	read_reg_v2(0xA1,buffer,4);
+	id=(buffer[2]<<8)+buffer[3];
+	//Lcd_Log("id=%x  get_lcd_id=%d \n",id,get_lcd_id());
+    return (LCM_ID == id)?1:0;
+
+//	return 1;
+
+}
+
+LCM_DRIVER otm1287a_hd720_tin_vdo_lcm_drv = 
+{
+    .name			= "otm1287a_hd720_tin_vdo",
+    .set_util_funcs = lcm_set_util_funcs,
+    .get_params     = lcm_get_params,
+    .init           = lcm_init,
+    .suspend        = lcm_suspend,
+    .resume         = lcm_resume,
+    .compare_id    = lcm_compare_id,
+};

@@ -1,0 +1,5 @@
+config RUNBO_INTERCOM
+	tristate "Runbo Intercom driver"
+	default n
+	---help---
+	  Say Y here to support Runbo Intercom.

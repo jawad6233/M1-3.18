@@ -1,0 +1,5 @@
+config SN7325_SUPPORT
+	bool "IS_SUPPORT_SN7325"
+	default n
+	help
+	  Is support the sn7325 function or not

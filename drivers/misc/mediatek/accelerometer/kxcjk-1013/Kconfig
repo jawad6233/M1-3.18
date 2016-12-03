@@ -1,0 +1,8 @@
+config MTK_KXCJK1031
+	bool "KXCJK1031 for MediaTek package"
+	default n
+	help
+	  It support different accelerometer sensor.
+          If this option is set,
+	  it will support
+          KXCJK1031 Accelerometer.
