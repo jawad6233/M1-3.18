@@ -24,7 +24,9 @@
 #include "mt_spm.h"
 #include "mt_spm_idle.h"
 #include "hotplug.h"
-#include "mt_cpufreq.h"
+#ifdef CONFIG_ARCH_MT6735
+#include "linux/mediatek/mt6735/mt_cpufreq.h"
+#endif
 #ifdef CONFIG_THERMAL
 #include <mach/mt_thermal.h>
 #endif

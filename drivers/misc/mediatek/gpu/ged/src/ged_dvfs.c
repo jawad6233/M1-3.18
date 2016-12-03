@@ -16,7 +16,7 @@
 
 #ifdef GED_DVFS_ENABLE
 #include <mt-plat/mt_boot.h>
-#include <mt_gpufreq.h>
+#include <linux/mediatek/mt6735/mt_gpufreq.h>
 #endif
 
 #include <trace/events/mtk_events.h>

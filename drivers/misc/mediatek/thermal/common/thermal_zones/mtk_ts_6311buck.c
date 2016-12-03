@@ -17,7 +17,9 @@
 #include <mach/upmu_hw.h>
 #include <mach/mt_pmic_wrap.h>
 #include <mt6311.h>
-#include "mt_cpufreq.h"
+#ifdef CONFIG_ARCH_MT6735
+#include "linux/mediatek/mt6735/mt_cpufreq.h"
+#endif
 #include <tmp_6311buck.h>
 #include <linux/uidgid.h>
 #include <linux/slab.h>

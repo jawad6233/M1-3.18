@@ -8,7 +8,7 @@
 #include <linux/string.h>
 #include <linux/slab.h>
 #include <mt-plat/upmu_common.h>
-#include "mt_sd.h"
+#include "linux/mediatek/mt6735/mt_sd.h"
 #include "sdio_autok.h"
 /*****************************************************************************
  *                        Symbol/Type Definition                             *

@@ -133,7 +133,9 @@ unsigned int reg_dump_addr_off[] = {
 #include <linux/seq_file.h>
 #include <asm/io.h>
 #include "mt_ptp.h"
-#include "mt_cpufreq.h"
+#ifdef CONFIG_ARCH_MT6735
+#include "linux/mediatek/mt6735/mt_cpufreq.h"
+#endif
 #include "mach/mt_thermal.h"
 #include "mach/mt_clkmgr.h"
 #include "mach/mt_freqhopping.h"
@@ -145,7 +147,7 @@ unsigned int reg_dump_addr_off[] = {
 #include <linux/of_fdt.h>
 #endif
 /* local includes */
-#include <mt_spm.h>
+#include "mt_spm.h"
 #include "aee.h"
 #include <linux/gpio.h>
 

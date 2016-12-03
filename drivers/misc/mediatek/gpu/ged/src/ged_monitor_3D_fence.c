@@ -26,7 +26,7 @@
 #include <mt-plat/mtk_gpu_utility.h>
 #include <trace/events/gpu.h>
 #ifdef GED_DVFS_ENABLE
-#include <mt_gpufreq.h>
+#include <linux/mediatek/mt6735/mt_gpufreq.h>
 #endif
 
 #include "ged_monitor_3D_fence.h"

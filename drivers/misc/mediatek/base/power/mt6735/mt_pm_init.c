@@ -22,15 +22,17 @@
 #include "mt_sleep.h"
 #include "mt_dcm.h"
 #include "mt_clkmgr.h"
-#include "mt_cpufreq.h"
-#include "mt_gpufreq.h"
+#ifdef CONFIG_ARCH_MT6735
+#include "linux/mediatek/mt6735/mt_cpufreq.h"
+#include "linux/mediatek/mt6735/mt_gpufreq.h"
+#endif
 /* #include "mach/mt_sleep.h" */
 /* #include "mach/mt_dcm.h" */
 #include <mach/mt_clkmgr.h>
 /* #include "mach/mt_cpufreq.h" */
 /* #include "mach/mt_gpufreq.h" */
 #include "mt_cpuidle.h"
-#include <mt_clkbuf_ctl.h>
+#include "mt_clkbuf_ctl.h"
 /* #include "mach/mt_clkbuf_ctl.h" */
 /* #include "mach/mt_chip.h" */
 #include "mt-plat/mtk_rtc.h"

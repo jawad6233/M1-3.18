@@ -30,7 +30,7 @@
 #if KBASE_PM_EN
 
 /* MTK GPU DVFS */
-#include "mach/mt_gpufreq.h"
+#include "mach/linux/mediatek/mt6735/mt_gpufreq.h"
 
 unsigned int g_current_gpu_platform_id = 0; 
 

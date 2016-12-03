@@ -49,7 +49,7 @@
 #ifdef CONFIG_MTK_AEE_FEATURE
 #include <mt-plat/aee.h>
 #endif
-#include "mt_sd.h"
+#include "linux/mediatek/mt6735/mt_sd.h"
 #ifdef MTK_SDIO30_ONLINE_TUNING_SUPPORT
 #include <mt_vcore_dvfs.h>
 #endif /* MTK_SDIO30_ONLINE_TUNING_SUPPORT */

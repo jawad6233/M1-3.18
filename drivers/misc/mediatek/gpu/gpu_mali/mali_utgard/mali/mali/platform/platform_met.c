@@ -19,7 +19,7 @@
 #include <linux/fs.h>
 #include <linux/sched.h>
 #include "met_drv.h"
-#include "mt_gpufreq.h"
+#include "linux/mediatek/mt6735/mt_gpufreq.h"
 
 extern struct metdevice met_gpu;
 static struct delayed_work dwork;

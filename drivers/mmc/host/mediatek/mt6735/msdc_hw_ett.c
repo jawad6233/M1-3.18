@@ -3,7 +3,7 @@
 #include <mach/mt_chip.h>
 #endif
 
-#include "mt_sd.h"
+#include "linux/mediatek/mt6735/mt_sd.h"
 #include "msdc_hw_ett.h"
 
 #ifdef CONFIG_ARCH_MT6735M

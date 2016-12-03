@@ -1,6 +1,6 @@
 #ifndef __MT_MSDC_DEUBG__
 #define __MT_MSDC_DEUBG__
-#include "mt_sd.h"
+#include "linux/mediatek/mt6735/mt_sd.h"
 #include<mt-plat/upmu_common.h>
 
 /* ========================== */

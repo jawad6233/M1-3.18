@@ -1,8 +1,9 @@
 #ifndef __M4U_PGTABLE_H__
 #define __M4U_PGTABLE_H__
 
-#include "m4u_reg.h"
-
+#ifdef CONFIG_ARCH_MT6735
+#include "../mt6735/mt6735/m4u_reg.h"
+#endif
 /* ================================================================= */
 /* 2 level pagetable: pgd -> pte */
 

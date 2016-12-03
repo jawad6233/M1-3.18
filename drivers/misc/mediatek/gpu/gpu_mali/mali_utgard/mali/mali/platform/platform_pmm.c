@@ -17,7 +17,7 @@
 #include "mali_kernel_common.h"
 #include "mali_osk.h"
 #include "platform_pmm.h"
-#include "mt_gpufreq.h"
+#include "linux/mediatek/mt6735/mt_gpufreq.h"
 /*#include "mach/mt_spm.h"*/
 /*#include "mach/mt_wdt.h"*/
 #include "mach/mt_clkmgr.h"

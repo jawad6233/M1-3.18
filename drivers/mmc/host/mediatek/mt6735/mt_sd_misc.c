@@ -19,7 +19,7 @@
 #include <linux/mmc/sdio.h>
 #include <linux/dma-mapping.h>
 #include <queue.h>
-#include "mt_sd.h"
+#include "linux/mediatek/mt6735/mt_sd.h"
 #include <mt-plat/sd_misc.h>
 
 #ifndef FPGA_PLATFORM

@@ -22,7 +22,9 @@
 #include <linux/seq_file.h>
 
 #include "sync_write.h"
-#include "mt_cpufreq.h"
+#ifdef CONFIG_ARCH_MT6735
+#include "linux/mediatek/mt6735/mt_cpufreq.h"
+#endif
 #include "mach/mt_clkmgr.h"
 
 static struct hrtimer mt_cpu_ss_timer;

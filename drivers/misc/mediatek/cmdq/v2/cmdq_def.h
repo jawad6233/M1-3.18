@@ -9,7 +9,9 @@
 #ifdef CMDQ_COMMON_ENG_SUPPORT
 #include "cmdq_engine_common.h"
 #else
-#include "cmdq_engine.h"
+#ifdef CONFIG_ARCH_MT6735
+#include "mt6735/cmdq_engine.h"
+#endif
 #endif
 
 #define CMDQ_SPECIAL_SUBSYS_ADDR (99)

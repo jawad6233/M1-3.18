@@ -13,7 +13,7 @@
 #include <mt-plat/upmu_common.h>
 #include <mach/upmu_sw.h>
 #include <mach/upmu_hw.h>
-#include "mt_sd.h"
+#include "linux/mediatek/mt6735/mt_sd.h"
 #include "mt_dump.h"
 #include <mt-plat/sd_misc.h>
 #include <mt-plat/sync_write.h>

@@ -4,7 +4,9 @@
 #include "extd_log.h"
 #include "extd_factory.h"
 #include "extd_info.h"
-#include "external_display.h"
+#ifdef CONFIG_ARCH_MT6735
+#include "mt6735/external_display.h"
+#endif
 
 #include "dpi_dvt_test.h"
 

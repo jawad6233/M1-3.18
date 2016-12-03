@@ -45,10 +45,7 @@
 #endif
 #endif
 #include <linux/mmc/host.h>
-/* #include <linux/mmc/sd_misc.h> */
-/* #include "../mmc-host/mt_sd.h" */
 #include <linux/genhd.h>
-/* #include "partition_dumchar.h" */
 #include <linux/of.h>
 #include <linux/of_address.h>
 #include <linux/of_irq.h>

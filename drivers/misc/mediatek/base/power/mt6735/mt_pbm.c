@@ -20,8 +20,10 @@
 #include <mach/mt_pbm.h>
 #include <mach/upmu_sw.h>
 #include <mt-plat/upmu_common.h>
-#include <mt_cpufreq.h>
-#include <mt_gpufreq.h>
+#ifdef CONFIG_ARCH_MT6735
+#include "linux/mediatek/mt6735/mt_cpufreq.h"
+#include "linux/mediatek/mt6735/mt_gpufreq.h"
+#endif
 #include <mach/mt_thermal.h>
 
 #ifndef DISABLE_PBM_FEATURE

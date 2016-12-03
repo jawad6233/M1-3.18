@@ -25,8 +25,9 @@
 #ifdef CONFIG_MT_SCHED_MON_DEFAULT_ENABLE
 #include "mt_sched_mon.h"
 #endif
-#include <mt_cpufreq.h>
-
+#ifdef CONFIG_ARCH_MT6735
+#include <linux/mediatek/mt6735/mt_cpufreq.h>
+#endif
 #define BOOT_STR_SIZE 256 /* Before: 128 */
 #define BOOT_LOG_NUM 192
 /* Memory Usage

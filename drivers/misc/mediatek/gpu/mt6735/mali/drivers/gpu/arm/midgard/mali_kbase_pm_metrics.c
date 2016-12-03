@@ -47,7 +47,7 @@ int g_current_sample_gl_utilization = 0;
 int g_current_sample_cl_utilization[2] = {0};
 
 /* MTK GPU DVFS */
-#include "mach/mt_gpufreq.h"
+#include "mach/linux/mediatek/mt6735/mt_gpufreq.h"
 #include "random.h"
 
 int g_dvfs_enabled = 1;

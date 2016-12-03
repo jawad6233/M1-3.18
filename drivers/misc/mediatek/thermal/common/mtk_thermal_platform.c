@@ -21,7 +21,7 @@
 #include <mt-plat/aee.h>
 #include <mtk_gpu_utility.h>
 #include <mt-plat/mtk_thermal_platform.h>
-#include <mt_gpufreq.h>
+#include <linux/mediatek/mt6735/mt_gpufreq.h>
 
 /* ************************************ */
 /* Definition */

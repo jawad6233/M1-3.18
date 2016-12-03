@@ -16,7 +16,7 @@
 #include <linux/slab.h>
 #include "mtk_thermal_typedefs.h"
 #include "mach/mt_thermal.h"
-#include "mt_gpufreq.h"
+#include "linux/mediatek/mt6735/mt_gpufreq.h"
 
 #if defined(CONFIG_MTK_CLKMGR)
 #include <mach/mt_clkmgr.h>

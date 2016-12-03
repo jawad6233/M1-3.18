@@ -33,7 +33,9 @@
 #include <linux/spinlock.h>
 #include <mt_hotplug_strategy.h>
 #include <mt_hotplug_strategy_internal.h>
-#include "mt_cpufreq.h"
+#ifdef CONFIG_ARCH_MT6735
+#include "linux/mediatek/mt6735/mt_cpufreq.h"
+#endif
 #include <linux/input.h>
 #include <linux/workqueue.h>
 #include "dynamic_boost.h"

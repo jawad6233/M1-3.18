@@ -6,7 +6,7 @@
 #include <linux/mmc/sdio_func.h>
 #include <mt-plat/mt_boot_common.h>
 
-#include "mt_sd.h"
+#include "linux/mediatek/mt6735/mt_sd.h"
 #include <mt_vcore_dvfs.h>
 
 #define AUTOK_READ 0

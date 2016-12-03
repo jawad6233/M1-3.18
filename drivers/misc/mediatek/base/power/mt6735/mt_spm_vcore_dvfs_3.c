@@ -4,7 +4,9 @@
 #include <linux/delay.h>
 
 #include "mt_vcore_dvfs.h"
-#include "mt_cpufreq.h"
+#ifdef CONFIG_ARCH_MT6735
+#include "linux/mediatek/mt6735/mt_cpufreq.h"
+#endif
 #include "mt_spm_internal.h"
 
 #define PER_OPP_DVS_US		600

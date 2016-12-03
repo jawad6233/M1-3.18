@@ -4,8 +4,10 @@
 #include <mt-plat/sync_write.h>
 #include <linux/types.h>
 /* #include <mach/mt_reg_base.h> */
-#include "ddp_info.h"
-#include "ddp_hal.h"
+#ifdef CONFIG_ARCH_MT6735
+#include "../../mt6735/dispsys/ddp_info.h"
+#include "../../mt6735/dispsys/ddp_hal.h"
+#endif
 
 extern unsigned long long rdma_start_time[];
 extern unsigned long long rdma_end_time[];

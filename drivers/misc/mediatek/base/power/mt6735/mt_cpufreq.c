@@ -71,8 +71,9 @@
 #endif
 
 /* local includes */
-#include "mt_cpufreq.h"
-
+#ifdef CONFIG_ARCH_MT6735
+#include "linux/mediatek/mt6735/mt_cpufreq.h"
+#endif
 
 /*=============================================================*/
 /* Macro definition											*/

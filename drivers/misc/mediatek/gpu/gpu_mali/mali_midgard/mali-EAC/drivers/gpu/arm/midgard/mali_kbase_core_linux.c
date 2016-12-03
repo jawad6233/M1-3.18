@@ -86,7 +86,7 @@
 
 /* MTK GPU DVFS */
 #include <mali_kbase_pm.h>
-#include "mt_gpufreq.h"
+#include "linux/mediatek/mt6735/mt_gpufreq.h"
 
 /* MTK chip version API */
 #include "mt_chip.h"

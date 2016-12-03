@@ -129,8 +129,9 @@ static const struct file_operations mt_fliper_fops = {
 };
 /******* POWER PERF TRANSFORMER *********/
 #include <asm/div64.h>
-#include <mt_cpufreq.h>
-
+#ifdef CONFIG_ARCH_MT6735
+#include <linux/mediatek/mt6735/mt_cpufreq.h>
+#endif
 static void mt_power_pef_transfer(void);
 static DEFINE_TIMER(mt_pp_transfer_timer, (void *)mt_power_pef_transfer, 0, 0);
 static int pp_index;

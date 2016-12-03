@@ -6,7 +6,7 @@
 #include <linux/mmc/host.h>
 #include <linux/mmc/sdio_func.h>
 #include <../drivers/mmc/core/core.h>
-#include "mt_sd.h"
+#include "linux/mediatek/mt6735/mt_sd.h"
 #include "sdio_autok.h"
 /* #include "autok.h" */
 #include <linux/kobject.h>

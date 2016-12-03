@@ -3,8 +3,10 @@
 
 #include "extd_multi_control.h"
 #include "disp_drv_platform.h"
-#include "external_display.h"
-#include "extd_platform.h"
+#ifdef CONFIG_ARCH_MT6735
+#include "mt6735/external_display.h"
+#include "mt6735/extd_platform.h"
+#endif
 #include "extd_log.h"
 #include "mtk_ovl.h"
 

@@ -32,7 +32,7 @@
 #include <backend/gpu/mali_kbase_pm_internal.h>
 
 /* MTK GPU DVFS */
-#include "mt_gpufreq.h"
+#include "linux/mediatek/mt6735/mt_gpufreq.h"
 #include "mt_chip.h"
 //#include "mach/mt_devinfo.h"
 

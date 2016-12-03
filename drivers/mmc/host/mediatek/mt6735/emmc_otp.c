@@ -23,7 +23,7 @@
 #include <linux/fs.h>
 #include <asm/uaccess.h>
 
-#include "mt_sd.h"
+#include "linux/mediatek/mt6735/mt_sd.h"
 #include "emmc_otp.h"
 #include <mt-plat/partition.h>
 

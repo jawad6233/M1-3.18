@@ -32,7 +32,7 @@
 #include "drivers/mmc/card/queue.h"
 
 #include "emmc_rpmb.h"
-#include "mt_sd.h"
+#include "linux/mediatek/mt6735/mt_sd.h"
 
 /* TEE usage */
 #ifdef CONFIG_TRUSTONIC_TEE_SUPPORT

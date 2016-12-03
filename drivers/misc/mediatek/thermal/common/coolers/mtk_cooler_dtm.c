@@ -19,7 +19,9 @@
 #if defined(CONFIG_ARCH_MT6755)
 #include "mach/mt_ppm_api.h"
 #else
-#include "mt_cpufreq.h"
+#ifdef CONFIG_ARCH_MT6735
+#include "linux/mediatek/mt6735/mt_cpufreq.h"
+#endif
 #endif
 
 /*=============================================================

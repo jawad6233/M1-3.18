@@ -1,8 +1,10 @@
 #ifndef _DDP_WDMA_H_
 #define _DDP_WDMA_H_
 
-#include "ddp_hal.h"
-#include "ddp_info.h"
+#ifdef CONFIG_ARCH_MT6735
+#include "../../mt6735/dispsys/ddp_hal.h"
+#include "../../mt6735/dispsys/ddp_info.h"
+#endif
 
 /* start module */
 int wdma_start(DISP_MODULE_ENUM module, void *handle);

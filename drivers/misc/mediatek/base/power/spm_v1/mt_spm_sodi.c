@@ -15,7 +15,9 @@
 #include <mt-plat/upmu_common.h>
 
 #include "mt_spm_idle.h"
-#include "mt_cpufreq.h"
+#ifdef CONFIG_ARCH_MT6735
+#include "linux/mediatek/mt6735/mt_cpufreq.h"
+#endif
 #include "mt_cpuidle.h"
 
 #include "mt_spm_internal.h"

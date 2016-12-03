@@ -35,8 +35,10 @@
 
 #include "mach/mt_clkmgr.h"
 #include "mach/mt_freqhopping.h"
-#include "mt_cpufreq.h"
-#include "mt_gpufreq.h"
+#ifdef CONFIG_ARCH_MT6735
+#include "linux/mediatek/mt6735/mt_cpufreq.h"
+#include "linux/mediatek/mt6735/mt_gpufreq.h"
+#endif
 #include "mt-plat/sync_write.h"
 #include "mt_static_power.h"
 #include "mach/mt_thermal.h"

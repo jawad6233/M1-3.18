@@ -83,7 +83,7 @@
 
 /* MTK GPU DVFS */
 #include <mali_kbase_pm.h>
-#include "mach/mt_gpufreq.h"
+#include "mach/linux/mediatek/mt6735/mt_gpufreq.h"
 
 /* GPU IRQ Tags */
 #define	JOB_IRQ_TAG	0

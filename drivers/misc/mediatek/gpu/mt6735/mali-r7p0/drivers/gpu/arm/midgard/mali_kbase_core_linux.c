@@ -101,7 +101,7 @@
 
 /* MTK GPU DVFS */
 #include <mali_kbase_pm.h>
-#include "mt_gpufreq.h"
+#include "linux/mediatek/mt6735/mt_gpufreq.h"
 #include <mali_kbase_pm_defs.h>
 #include <mali_kbase_pm_internal.h>
 #include "ged_dvfs.h"

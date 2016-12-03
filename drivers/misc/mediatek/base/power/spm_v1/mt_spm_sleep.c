@@ -18,7 +18,9 @@
 /* #include <mach/eint.h> */
 /* #include <mach/mtk_ccci_helper.h> */
 #include <mt-plat/mt_ccci_common.h>
-#include "mt_cpufreq.h"
+#ifdef CONFIG_ARCH_MT6735
+#include "linux/mediatek/mt6735/mt_cpufreq.h"
+#endif
 #include "mt_power_gs-v1.h"
 /* #include <mt-plat/upmu_common.h> */
 /* #include <mt-plat/upmu_sw.h> */

@@ -25,7 +25,7 @@
 
 /* MTK clock modified */
 #include "mach/mt_clkmgr.h"
-#include "mach/mt_gpufreq.h"
+#include "mach/linux/mediatek/mt6735/mt_gpufreq.h"
 #include <mach/upmu_common.h>
 #include <mach/upmu_sw.h>
 #include <mach/upmu_hw.h>

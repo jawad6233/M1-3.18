@@ -24,7 +24,7 @@
 #include "mali_kbase_cpu_vexpress.h"
 
 /* MTK clock modified */
-#include "mt_gpufreq.h"
+#include "linux/mediatek/mt6735/mt_gpufreq.h"
 #include "upmu_common.h"
 #include "upmu_sw.h"
 #include "upmu_hw.h"
